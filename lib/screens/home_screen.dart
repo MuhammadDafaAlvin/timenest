@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../providers/timer_provider.dart';
-import '../widgets/glass_container.dart';
 import '../widgets/task_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -32,7 +31,16 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            GlassContainer(
+            Container(
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(
+                  0,
+                  52,
+                  51,
+                  51,
+                ).withAlpha((0.5 * 255).round()),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -62,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      progressColor: Colors.blue,
+                      progressColor: Colors.blueAccent,
                       backgroundColor: Colors.grey[300]!,
                     ),
                     const SizedBox(height: 20),
@@ -78,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                             timerProvider.isRunning ? 'Jeda' : 'Mulai',
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 20),
                         ElevatedButton(
                           onPressed: timerProvider.resetTimer,
                           child: const Text('Reset'),
@@ -93,7 +101,9 @@ class HomeScreen extends StatelessWidget {
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Tambah Tugas',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
               ),
               onSubmitted: (value) {
                 if (value.isNotEmpty) {

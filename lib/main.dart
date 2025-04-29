@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'providers/timer_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/stats_screen.dart';
@@ -19,9 +20,31 @@ class TimeNestApp extends StatelessWidget {
       child: MaterialApp(
         title: 'TimeNest',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Colors.grey[100],
-          fontFamily: 'Poppins',
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: const Color(0xFF121212),
+          primaryColor: Colors.blueAccent,
+          textTheme: GoogleFonts.interTextTheme(
+            ThemeData.dark().textTheme,
+          ).copyWith(
+            bodyLarge: GoogleFonts.inter(letterSpacing: -0.5),
+            bodyMedium: GoogleFonts.inter(letterSpacing: -0.5),
+            titleLarge: GoogleFonts.inter(letterSpacing: -1.0),
+            titleMedium: GoogleFonts.inter(letterSpacing: -1.0),
+            labelLarge: GoogleFonts.inter(letterSpacing: -0.8),
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF1E1E1E),
+            elevation: 0,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blueAccent,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
         ),
         initialRoute: '/',
         routes: {
