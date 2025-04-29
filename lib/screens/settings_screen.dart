@@ -7,12 +7,31 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Pengaturan')),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text('Pengaturan (Segera Hadir)', style: TextStyle(fontSize: 18)),
-          ],
+      body: const Center(
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image(
+                image: AssetImage('assets/images/coming_soon.png'),
+                height: 350,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(
+                width: 300,
+                child: Text(
+                  'Lagi disiapin dulu fiturnya 🚀',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

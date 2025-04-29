@@ -11,10 +11,10 @@ class HomeScreen extends StatelessWidget {
   static final buttonStyle = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
     backgroundColor: Colors.grey[800],
-    minimumSize: const Size(90, 45),
+    minimumSize: const Size(100, 45),
     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-    textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+    textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700),
   );
 
   @override
