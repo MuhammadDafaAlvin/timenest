@@ -11,7 +11,7 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
-      opacity: 0.1, // Latar belakang lebih transparan
+      opacity: 0.1,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -22,16 +22,13 @@ class TaskCard extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // Teks utama lebih terang
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               'Pomodoro selesai: ${task.completedPomodoros}',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                color: Colors.grey[200], // Teks sekunder lebih terang
-              ),
+              style: GoogleFonts.inter(fontSize: 16, color: Colors.grey[200]),
             ),
           ],
         ),

@@ -14,7 +14,7 @@ class GlassContainer extends StatelessWidget {
     this.borderRadius = 20,
     this.blur = 5,
     this.opacity = 0.15,
-    this.color = Colors.grey, // Default ke grey untuk tema gelap
+    this.color = Colors.grey,
   });
 
   @override
@@ -27,7 +27,7 @@ class GlassContainer extends StatelessWidget {
           decoration: BoxDecoration(
             color: color.withAlpha(
               (opacity * 255).round(),
-            ), // Warna dengan opasitas
+            ), 
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
               color: color.withAlpha((opacity * 255).round()),

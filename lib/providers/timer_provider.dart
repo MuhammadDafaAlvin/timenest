@@ -6,9 +6,9 @@ import '../models/task.dart';
 import 'dart:convert';
 
 class TimerProvider with ChangeNotifier {
-  final int _workDuration = 25 * 60; // 25 menit dalam detik
-  final int _shortBreak = 5 * 60; // 5 menit
-  final int _longBreak = 15 * 60; // 15 menit
+  final int _workDuration = 25 * 60; // 25 minutes
+  final int _shortBreak = 5 * 60; // 5 minutes
+  final int _longBreak = 15 * 60; // 15 minutes
   int _timeLeft = 25 * 60;
   bool _isRunning = false;
   String _currentMode = 'Work';
