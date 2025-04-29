@@ -18,7 +18,11 @@ class StatsScreen extends StatelessWidget {
           children: [
             Text(
               'Pomodoro Selesai Hari Ini: ${timerProvider.completedPomodorosToday}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.greenAccent,
+              ),
             ),
             const SizedBox(height: 20),
             SizedBox(

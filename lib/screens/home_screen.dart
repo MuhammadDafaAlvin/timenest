@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../providers/timer_provider.dart';
 import '../widgets/task_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  static final buttonStyle = ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: Colors.grey[800],
+    minimumSize: const Size(90, 45),
+    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+    textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +26,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('TimeNest'),
+        backgroundColor: Colors.grey[900],
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart),
@@ -33,13 +44,8 @@ class HomeScreen extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: const Color.fromARGB(
-                  0,
-                  52,
-                  51,
-                  51,
-                ).withAlpha((0.5 * 255).round()),
-                borderRadius: BorderRadius.circular(20),
+                color: Colors.grey[900]!.withAlpha((0.5 * 255).round()),
+                borderRadius: BorderRadius.circular(30),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -47,9 +53,10 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Text(
                       timerProvider.currentMode,
-                      style: const TextStyle(
+                      style: GoogleFonts.inter(
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -65,13 +72,14 @@ class HomeScreen extends StatelessWidget {
                               : 15 * 60),
                       center: Text(
                         '$minutes:$seconds',
-                        style: const TextStyle(
+                        style: GoogleFonts.inter(
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      progressColor: Colors.blueAccent,
-                      backgroundColor: Colors.grey[300]!,
+                      progressColor: const Color.fromARGB(255, 4, 196, 103),
+                      backgroundColor: Colors.grey[800]!,
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -82,14 +90,24 @@ class HomeScreen extends StatelessWidget {
                               timerProvider.isRunning
                                   ? timerProvider.pauseTimer
                                   : timerProvider.startTimer,
+                          style: buttonStyle,
                           child: Text(
                             timerProvider.isRunning ? 'Jeda' : 'Mulai',
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 20),
                         ElevatedButton(
                           onPressed: timerProvider.resetTimer,
-                          child: const Text('Reset'),
+                          style: buttonStyle,
+                          child: const Text(
+                            'Reset',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ],
                     ),
@@ -99,10 +117,12 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
-              decoration: const InputDecoration(
+              style: GoogleFonts.inter(color: Colors.white),
+              decoration: InputDecoration(
                 labelText: 'Tambah Tugas',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                labelStyle: GoogleFonts.inter(color: Colors.grey[400]),
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
                 ),
               ),
               onSubmitted: (value) {

@@ -6,13 +6,15 @@ class GlassContainer extends StatelessWidget {
   final double borderRadius;
   final double blur;
   final double opacity;
+  final Color color;
 
   const GlassContainer({
     super.key,
     required this.child,
     this.borderRadius = 20,
-    this.blur = 10,
-    this.opacity = 0.2,
+    this.blur = 5,
+    this.opacity = 0.15,
+    this.color = Colors.grey, // Default ke grey untuk tema gelap
   });
 
   @override
@@ -23,10 +25,12 @@ class GlassContainer extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(opacity),
+            color: color.withAlpha(
+              (opacity * 255).round(),
+            ), // Warna dengan opasitas
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: color.withAlpha((opacity * 255).round()),
               width: 1.5,
             ),
           ),
