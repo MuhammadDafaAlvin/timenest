@@ -10,8 +10,8 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   static final buttonStyle = ElevatedButton.styleFrom(
-    foregroundColor: null, // Menggunakan warna dari tema
-    backgroundColor: null, // Menggunakan warna dari tema
+    foregroundColor: null,
+    backgroundColor: null,
     minimumSize: const Size(100, 45),
     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
@@ -26,7 +26,6 @@ class HomeScreen extends StatelessWidget {
           'Timenest',
           style: GoogleFonts.inter(
             color: Theme.of(context).appBarTheme.foregroundColor,
-            fontWeight: FontWeight.w500,
           ),
         ),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -57,7 +56,6 @@ class HomeScreen extends StatelessWidget {
               '0',
             );
 
-            // Hitung persentase dengan aman
             final duration =
                 timerProvider.currentMode == 'Work'
                     ? timerProvider.workDuration
@@ -69,20 +67,21 @@ class HomeScreen extends StatelessWidget {
                     ? (timerProvider.timeLeft / duration).clamp(0.0, 1.0)
                     : 0.0;
 
+            final buttonColor =
+                Theme.of(context).brightness == Brightness.dark
+                    ? Colors.blue[700]
+                    : Colors.blue;
+
             return Column(
               children: [
                 GlassContainer(
                   opacity:
                       Theme.of(context).brightness == Brightness.dark
-                          ? 0.3
-                          : 0.5, // Opacity disesuaikan
+                          ? 0.4
+                          : 0.5,
                   borderRadius: 30.0,
-                  color: Theme.of(context).colorScheme.surface.withAlpha(
-                    Theme.of(context).brightness == Brightness.dark
-                        ? (255 * 0.3).round()
-                        : (255 * 0.1).round(),
-                  ),
-
+                  blur: 5.0,
+                  color: Theme.of(context).colorScheme.surface,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
@@ -109,11 +108,11 @@ class HomeScreen extends StatelessWidget {
                                   Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
-                          progressColor: Theme.of(context).colorScheme.primary,
+                          progressColor: buttonColor,
                           backgroundColor: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withAlpha((255 * 0.3).round()),
+                              .withAlpha((0.3 * 255).toInt()),
                         ),
                         const SizedBox(height: 20),
                         Row(
@@ -126,10 +125,10 @@ class HomeScreen extends StatelessWidget {
                                       : timerProvider.startTimer,
                               style: buttonStyle.copyWith(
                                 backgroundColor: WidgetStateProperty.all(
-                                  Theme.of(context).colorScheme.primary,
+                                  buttonColor,
                                 ),
                                 foregroundColor: WidgetStateProperty.all(
-                                  Theme.of(context).colorScheme.onPrimary,
+                                  Colors.white,
                                 ),
                               ),
                               child: Text(
@@ -137,8 +136,7 @@ class HomeScreen extends StatelessWidget {
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -147,10 +145,10 @@ class HomeScreen extends StatelessWidget {
                               onPressed: timerProvider.resetTimer,
                               style: buttonStyle.copyWith(
                                 backgroundColor: WidgetStateProperty.all(
-                                  Theme.of(context).colorScheme.primary,
+                                  buttonColor,
                                 ),
                                 foregroundColor: WidgetStateProperty.all(
-                                  Theme.of(context).colorScheme.onPrimary,
+                                  Colors.white,
                                 ),
                               ),
                               child: Text(
@@ -158,8 +156,7 @@ class HomeScreen extends StatelessWidget {
                                 style: GoogleFonts.inter(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -186,7 +183,7 @@ class HomeScreen extends StatelessWidget {
                       borderSide: BorderSide(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withAlpha((255 * 0.3).round()),
+                        ).colorScheme.onSurface.withAlpha((0.3 * 255).toInt()),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -196,7 +193,7 @@ class HomeScreen extends StatelessWidget {
                       borderSide: BorderSide(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withAlpha((255 * 0.3).round()),
+                        ).colorScheme.onSurface.withAlpha((0.3 * 255).toInt()),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(

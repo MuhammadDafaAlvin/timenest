@@ -1,37 +1,27 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../models/task.dart';
 import 'dart:convert';
 
 class TimerProvider with ChangeNotifier {
-  int _workDuration = 25 * 60; // Default 25 menit
-  int _shortBreakDuration = 5 * 60; // Default 5 menit
-  int _longBreakDuration = 15 * 60; // Default 15 menit
+  int _workDuration = 25 * 60;
+  int _shortBreakDuration = 5 * 60;
+  int _longBreakDuration = 15 * 60;
   int _timeLeft = 25 * 60;
   bool _isRunning = false;
   String _currentMode = 'Work';
   Timer? _timer;
   List<Task> _tasks = [];
   int _completedPomodorosToday = 0;
-  int _sessionsBeforeLongBreak = 4; // Default: Long Break setelah 4 sesi
+  int _sessionsBeforeLongBreak = 4;
   int _sessionCount = 0;
-  bool _notificationsEnabled = true; // Default: Notifikasi aktif
-  String _notificationSound = 'default'; // default, silent, custom_sound
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  // Getter untuk pengaturan
   int get workDuration => _workDuration;
   int get shortBreakDuration => _shortBreakDuration;
   int get longBreakDuration => _longBreakDuration;
   int get sessionsBeforeLongBreak => _sessionsBeforeLongBreak;
-  bool get notificationsEnabled => _notificationsEnabled;
-  String get notificationSound => _notificationSound;
 
-  // Getter yang sudah ada
   int get timeLeft => _timeLeft;
   bool get isRunning => _isRunning;
   String get currentMode => _currentMode;
@@ -41,28 +31,52 @@ class TimerProvider with ChangeNotifier {
   TimerProvider() {
     loadSettings();
     _loadTasks();
-    _initNotifications();
+    _restoreTimerState();
   }
 
-  // Memuat semua pengaturan dari SharedPreferences
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     _workDuration = prefs.getInt('workDuration') ?? 25 * 60;
     _shortBreakDuration = prefs.getInt('shortBreakDuration') ?? 5 * 60;
     _longBreakDuration = prefs.getInt('longBreakDuration') ?? 15 * 60;
     _sessionsBeforeLongBreak = prefs.getInt('sessionsBeforeLongBreak') ?? 4;
-    _notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
-    _notificationSound = prefs.getString('notificationSound') ?? 'default';
-    _timeLeft =
-        _currentMode == 'Work'
-            ? _workDuration
-            : _currentMode == 'Short Break'
-            ? _shortBreakDuration
-            : _longBreakDuration;
     notifyListeners();
   }
 
-  // Menyimpan durasi timer
+  Future<void> _saveTimerState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('timeLeft', _timeLeft);
+    await prefs.setBool('isRunning', _isRunning);
+    await prefs.setString('currentMode', _currentMode);
+    await prefs.setInt('sessionCount', _sessionCount);
+    await prefs.setInt('completedPomodorosToday', _completedPomodorosToday);
+  }
+
+  Future<void> _restoreTimerState() async {
+    final prefs = await SharedPreferences.getInstance();
+    _timeLeft = prefs.getInt('timeLeft') ?? _workDuration;
+    _isRunning = prefs.getBool('isRunning') ?? false;
+    _currentMode = prefs.getString('currentMode') ?? 'Work';
+    _sessionCount = prefs.getInt('sessionCount') ?? 0;
+    _completedPomodorosToday = prefs.getInt('completedPomodorosToday') ?? 0;
+
+    if (_isRunning) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (_timeLeft > 0) {
+          _timeLeft--;
+          _saveTimerState();
+          notifyListeners();
+        } else {
+          _timer?.cancel();
+          _isRunning = false;
+          _switchMode();
+          _saveTimerState();
+        }
+      });
+    }
+    notifyListeners();
+  }
+
   Future<void> setDurations(int work, int shortBreak, int longBreak) async {
     final prefs = await SharedPreferences.getInstance();
     _workDuration = work;
@@ -71,7 +85,6 @@ class TimerProvider with ChangeNotifier {
     await prefs.setInt('workDuration', work);
     await prefs.setInt('shortBreakDuration', shortBreak);
     await prefs.setInt('longBreakDuration', longBreak);
-    // Validasi _timeLeft agar sesuai dengan durasi baru
     final maxDuration =
         _currentMode == 'Work'
             ? _workDuration
@@ -82,71 +95,55 @@ class TimerProvider with ChangeNotifier {
     if (!_isRunning) {
       resetTimer();
     }
+    _saveTimerState();
     notifyListeners();
   }
 
-  // Menyimpan jumlah sesi sebelum Long Break
   Future<void> setSessionsBeforeLongBreak(int sessions) async {
     final prefs = await SharedPreferences.getInstance();
     _sessionsBeforeLongBreak = sessions;
     await prefs.setInt('sessionsBeforeLongBreak', sessions);
+    _saveTimerState();
     notifyListeners();
   }
 
-  // Mengatur status notifikasi
-  Future<void> setNotificationsEnabled(bool enabled) async {
-    final prefs = await SharedPreferences.getInstance();
-    _notificationsEnabled = enabled;
-    await prefs.setBool('notificationsEnabled', enabled);
-    notifyListeners();
-  }
-
-  // Mengatur suara notifikasi
-  Future<void> setNotificationSound(String sound) async {
-    final prefs = await SharedPreferences.getInstance();
-    _notificationSound = sound;
-    await prefs.setString('notificationSound', sound);
-    notifyListeners();
-  }
-
-  // Reset semua pengaturan ke default
   Future<void> resetSettings() async {
     final prefs = await SharedPreferences.getInstance();
     _workDuration = 25 * 60;
     _shortBreakDuration = 5 * 60;
     _longBreakDuration = 15 * 60;
     _sessionsBeforeLongBreak = 4;
-    _notificationsEnabled = true;
-    _notificationSound = 'default';
     await prefs.setInt('workDuration', _workDuration);
     await prefs.setInt('shortBreakDuration', _shortBreakDuration);
     await prefs.setInt('longBreakDuration', _longBreakDuration);
     await prefs.setInt('sessionsBeforeLongBreak', _sessionsBeforeLongBreak);
-    await prefs.setBool('notificationsEnabled', _notificationsEnabled);
-    await prefs.setString('notificationSound', _notificationSound);
     _timeLeft = _workDuration;
     _currentMode = 'Work';
     _sessionCount = 0;
-    if (!_isRunning) {
-      resetTimer();
-    }
+    _completedPomodorosToday = 0;
+    _timer?.cancel();
+    _isRunning = false;
+    _saveTimerState();
     notifyListeners();
   }
 
   void startTimer() {
     if (!_isRunning) {
       _isRunning = true;
+      _timer?.cancel();
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (_timeLeft > 0) {
           _timeLeft--;
+          _saveTimerState();
           notifyListeners();
         } else {
           _timer?.cancel();
           _isRunning = false;
-          _notifySessionComplete();
           _switchMode();
+          _saveTimerState();
         }
       });
+      _saveTimerState();
       notifyListeners();
     }
   }
@@ -154,6 +151,7 @@ class TimerProvider with ChangeNotifier {
   void pauseTimer() {
     _timer?.cancel();
     _isRunning = false;
+    _saveTimerState();
     notifyListeners();
   }
 
@@ -166,6 +164,7 @@ class TimerProvider with ChangeNotifier {
             : _currentMode == 'Short Break'
             ? _shortBreakDuration
             : _longBreakDuration;
+    _saveTimerState();
     notifyListeners();
   }
 
@@ -189,6 +188,7 @@ class TimerProvider with ChangeNotifier {
       _currentMode = 'Work';
       _timeLeft = _workDuration;
     }
+    _saveTimerState();
     notifyListeners();
   }
 
@@ -214,36 +214,5 @@ class TimerProvider with ChangeNotifier {
       _tasks = tasksList.map((json) => Task.fromJson(json)).toList();
       notifyListeners();
     }
-  }
-
-  void _initNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    await _notificationsPlugin.initialize(initializationSettings);
-  }
-
-  void _notifySessionComplete() async {
-    if (!_notificationsEnabled) return;
-    AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'timer_channel',
-      'Timer Notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-      sound:
-          _notificationSound == 'default'
-              ? const RawResourceAndroidNotificationSound('notification')
-              : null,
-    );
-    NotificationDetails platformDetails = NotificationDetails(
-      android: androidDetails,
-    );
-    await _notificationsPlugin.show(
-      0,
-      'Sesi $_currentMode Selesai',
-      'Waktunya untuk ${_currentMode == 'Work' ? 'istirahat' : 'bekerja kembali'}!',
-      platformDetails,
-    );
   }
 }

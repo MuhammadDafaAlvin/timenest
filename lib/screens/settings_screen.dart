@@ -18,16 +18,11 @@ class SettingsScreenState extends State<SettingsScreen> {
   double _shortBreakDuration = 5;
   double _longBreakDuration = 15;
   int _sessionsBeforeLongBreak = 4;
-  // ignore: unused_field
-  bool _notificationsEnabled = true;
-  String _notificationSound = 'default';
   bool _isDarkTheme = true;
-  String _selectedLanguage = 'en';
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi nilai awal dari TimerProvider
     final timerProvider = Provider.of<TimerProvider>(context, listen: false);
     timerProvider.loadSettings().then((_) {
       setState(() {
@@ -35,11 +30,9 @@ class SettingsScreenState extends State<SettingsScreen> {
         _shortBreakDuration = timerProvider.shortBreakDuration / 60;
         _longBreakDuration = timerProvider.longBreakDuration / 60;
         _sessionsBeforeLongBreak = timerProvider.sessionsBeforeLongBreak;
-        _notificationsEnabled = timerProvider.notificationsEnabled;
-        _notificationSound = timerProvider.notificationSound;
       });
     });
-    // Load preferensi tema dan bahasa
+    // Load preferensi tema
     _loadPreferences();
   }
 
@@ -47,18 +40,12 @@ class SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isDarkTheme = prefs.getString('themeMode') != 'light';
-      _selectedLanguage = prefs.getString('language') ?? 'en';
     });
   }
 
   Future<void> _saveTheme(bool isDark) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('themeMode', isDark ? 'dark' : 'light');
-  }
-
-  Future<void> _saveLanguage(String language) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('language', language);
   }
 
   @override
@@ -82,7 +69,8 @@ class SettingsScreenState extends State<SettingsScreen> {
             children: [
               // Durasi Timer
               GlassContainer(
-                opacity: 0.1,
+                opacity:
+                    Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
                 borderRadius: 12.0,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -113,7 +101,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                         activeColor: Theme.of(context).colorScheme.primary,
                         inactiveColor: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3 * 255),
+                        ).colorScheme.onSurface.withAlpha((255 * 0.3).round()),
+
                         onChanged:
                             (value) => setState(() => _workDuration = value),
                         onChangeEnd: (value) {
@@ -139,7 +128,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                         activeColor: Theme.of(context).colorScheme.primary,
                         inactiveColor: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3 * 255),
+                        ).colorScheme.onSurface.withAlpha(77),
                         onChanged:
                             (value) =>
                                 setState(() => _shortBreakDuration = value),
@@ -166,7 +155,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                         activeColor: Theme.of(context).colorScheme.primary,
                         inactiveColor: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3 * 255),
+                        ).colorScheme.onSurface.withAlpha(77),
                         onChanged:
                             (value) =>
                                 setState(() => _longBreakDuration = value),
@@ -218,7 +207,8 @@ class SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 16),
               // Tampilan
               GlassContainer(
-                opacity: 0.1,
+                opacity:
+                    Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
                 borderRadius: 12.0,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -254,119 +244,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                           }
                         },
                       ),
-                      Text(
-                        'Bahasa',
-                        style: GoogleFonts.inter(
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: _selectedLanguage,
-                        dropdownColor: Theme.of(context).colorScheme.surface,
-                        style: GoogleFonts.inter(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                        items: [
-                          DropdownMenuItem(
-                            value: 'en',
-                            child: Text(
-                              'English',
-                              style: GoogleFonts.inter(
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).textTheme.bodyLarge?.color,
-                              ),
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 'id',
-                            child: Text(
-                              'Indonesia',
-                              style: GoogleFonts.inter(
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).textTheme.bodyLarge?.color,
-                              ),
-                            ),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(() => _selectedLanguage = value!);
-                          _saveLanguage(value!);
-                          // TODO: Panggil setLocale di main.dart untuk mengubah bahasa
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Notifikasi
-              GlassContainer(
-                opacity: 0.1,
-                borderRadius: 12.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Notifikasi',
-                        style: GoogleFonts.inter(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      SwitchListTile(
-                        title: Text(
-                          'Aktifkan Notifikasi',
-                          style: GoogleFonts.inter(
-                            color:
-                                Theme.of(context).textTheme.bodyMedium?.color,
-                          ),
-                        ),
-                        value: timerProvider.notificationsEnabled,
-                        activeColor: Theme.of(context).colorScheme.primary,
-                        onChanged: (value) {
-                          timerProvider.setNotificationsEnabled(value);
-                        },
-                      ),
-                      Text(
-                        'Suara Notifikasi',
-                        style: GoogleFonts.inter(
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                        ),
-                      ),
-                      DropdownButton<String>(
-                        value: _notificationSound,
-                        dropdownColor: Theme.of(context).colorScheme.surface,
-                        style: GoogleFonts.inter(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                        items:
-                            ['default', 'silent', 'custom_sound'].map((sound) {
-                              return DropdownMenuItem(
-                                value: sound,
-                                child: Text(
-                                  sound,
-                                  style: GoogleFonts.inter(
-                                    color:
-                                        Theme.of(
-                                          context,
-                                        ).textTheme.bodyLarge?.color,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                        onChanged: (value) {
-                          setState(() => _notificationSound = value!);
-                          timerProvider.setNotificationSound(value!);
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -374,7 +251,8 @@ class SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 16),
               // Reset Pengaturan
               GlassContainer(
-                opacity: 0.1,
+                opacity:
+                    Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
                 borderRadius: 12.0,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -386,12 +264,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                         _shortBreakDuration = 5;
                         _longBreakDuration = 15;
                         _sessionsBeforeLongBreak = 4;
-                        _notificationsEnabled = true;
-                        _notificationSound = 'default';
                         _isDarkTheme = true;
-                        _selectedLanguage = 'en';
                         _saveTheme(true);
-                        _saveLanguage('en');
                         if (widget.onThemeChanged != null) {
                           widget.onThemeChanged!(ThemeMode.dark);
                         }
@@ -402,7 +276,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       side: BorderSide(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.7 * 255),
+                        ).colorScheme.onSurface.withAlpha((0.7 * 255).toInt()),
                       ),
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
