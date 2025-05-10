@@ -1,27 +1,27 @@
 class Task {
-  String id;
-  String title;
+  final String id;
+  final String title;
+  final DateTime date;
   int completedPomodoros;
-  DateTime date;
 
   Task({
     required this.id,
     required this.title,
-    this.completedPomodoros = 0,
     required this.date,
+    this.completedPomodoros = 0,
   });
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,
-    'completedPomodoros': completedPomodoros,
     'date': date.toIso8601String(),
+    'completedPomodoros': completedPomodoros,
   };
 
   factory Task.fromJson(Map<String, dynamic> json) => Task(
     id: json['id'],
     title: json['title'],
-    completedPomodoros: json['completedPomodoros'],
     date: DateTime.parse(json['date']),
+    completedPomodoros: json['completedPomodoros'],
   );
 }
