@@ -51,6 +51,11 @@ class SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _saveTheme(bool isDark) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('themeMode', isDark ? 'dark' : 'light');
+  }
+
   Future<void> _saveLanguage(String language) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language', language);
@@ -62,12 +67,14 @@ class SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         title: Text(
           'Pengaturan',
-          style: GoogleFonts.inter(color: Colors.white),
+          style: GoogleFonts.inter(
+            color: Theme.of(context).appBarTheme.foregroundColor,
+          ),
         ),
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
       ),
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Consumer<TimerProvider>(
         builder: (context, timerProvider, child) {
           return ListView(
@@ -85,7 +92,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       Text(
                         'Durasi Timer',
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -93,7 +100,9 @@ class SettingsScreenState extends State<SettingsScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Work (menit)',
-                        style: GoogleFonts.inter(color: Colors.grey[200]),
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
                       ),
                       Slider(
                         value: _workDuration,
@@ -101,8 +110,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                         max: 60,
                         divisions: 50,
                         label: _workDuration.round().toString(),
-                        activeColor: Colors.blueAccent,
-                        inactiveColor: Colors.grey[700],
+                        activeColor: Theme.of(context).colorScheme.primary,
+                        inactiveColor: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.3 * 255),
                         onChanged:
                             (value) => setState(() => _workDuration = value),
                         onChangeEnd: (value) {
@@ -115,7 +126,9 @@ class SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Text(
                         'Short Break (menit)',
-                        style: GoogleFonts.inter(color: Colors.grey[200]),
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
                       ),
                       Slider(
                         value: _shortBreakDuration,
@@ -123,8 +136,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                         max: 15,
                         divisions: 12,
                         label: _shortBreakDuration.round().toString(),
-                        activeColor: Colors.blueAccent,
-                        inactiveColor: Colors.grey[700],
+                        activeColor: Theme.of(context).colorScheme.primary,
+                        inactiveColor: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.3 * 255),
                         onChanged:
                             (value) =>
                                 setState(() => _shortBreakDuration = value),
@@ -138,7 +153,9 @@ class SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Text(
                         'Long Break (menit)',
-                        style: GoogleFonts.inter(color: Colors.grey[200]),
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
                       ),
                       Slider(
                         value: _longBreakDuration,
@@ -146,8 +163,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                         max: 30,
                         divisions: 20,
                         label: _longBreakDuration.round().toString(),
-                        activeColor: Colors.blueAccent,
-                        inactiveColor: Colors.grey[700],
+                        activeColor: Theme.of(context).colorScheme.primary,
+                        inactiveColor: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.3 * 255),
                         onChanged:
                             (value) =>
                                 setState(() => _longBreakDuration = value),
@@ -162,19 +181,28 @@ class SettingsScreenState extends State<SettingsScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Sesi Sebelum Long Break',
-                        style: GoogleFonts.inter(color: Colors.grey[200]),
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
                       ),
                       DropdownButton<int>(
                         value: _sessionsBeforeLongBreak,
-                        dropdownColor: Colors.grey[800],
-                        style: GoogleFonts.inter(color: Colors.white),
+                        dropdownColor: Theme.of(context).colorScheme.surface,
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
                         items:
                             [2, 3, 4, 5].map((sessions) {
                               return DropdownMenuItem(
                                 value: sessions,
                                 child: Text(
                                   '$sessions sesi',
-                                  style: GoogleFonts.inter(color: Colors.white),
+                                  style: GoogleFonts.inter(
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge?.color,
+                                  ),
                                 ),
                               );
                             }).toList(),
@@ -200,7 +228,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       Text(
                         'Tampilan',
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -209,12 +237,16 @@ class SettingsScreenState extends State<SettingsScreen> {
                       SwitchListTile(
                         title: Text(
                           'Tema Gelap',
-                          style: GoogleFonts.inter(color: Colors.grey[200]),
+                          style: GoogleFonts.inter(
+                            color:
+                                Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
                         ),
                         value: _isDarkTheme,
-                        activeColor: Colors.blueAccent,
+                        activeColor: Theme.of(context).colorScheme.primary,
                         onChanged: (value) {
                           setState(() => _isDarkTheme = value);
+                          _saveTheme(value);
                           if (widget.onThemeChanged != null) {
                             widget.onThemeChanged!(
                               value ? ThemeMode.dark : ThemeMode.light,
@@ -224,25 +256,39 @@ class SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Text(
                         'Bahasa',
-                        style: GoogleFonts.inter(color: Colors.grey[200]),
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
                       ),
                       DropdownButton<String>(
                         value: _selectedLanguage,
-                        dropdownColor: Colors.grey[800],
-                        style: GoogleFonts.inter(color: Colors.white),
+                        dropdownColor: Theme.of(context).colorScheme.surface,
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
                         items: [
                           DropdownMenuItem(
                             value: 'en',
                             child: Text(
                               'English',
-                              style: GoogleFonts.inter(color: Colors.white),
+                              style: GoogleFonts.inter(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge?.color,
+                              ),
                             ),
                           ),
                           DropdownMenuItem(
                             value: 'id',
                             child: Text(
                               'Indonesia',
-                              style: GoogleFonts.inter(color: Colors.white),
+                              style: GoogleFonts.inter(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge?.color,
+                              ),
                             ),
                           ),
                         ],
@@ -269,7 +315,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       Text(
                         'Notifikasi',
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -278,29 +324,41 @@ class SettingsScreenState extends State<SettingsScreen> {
                       SwitchListTile(
                         title: Text(
                           'Aktifkan Notifikasi',
-                          style: GoogleFonts.inter(color: Colors.grey[200]),
+                          style: GoogleFonts.inter(
+                            color:
+                                Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
                         ),
                         value: timerProvider.notificationsEnabled,
-                        activeColor: Colors.blueAccent,
+                        activeColor: Theme.of(context).colorScheme.primary,
                         onChanged: (value) {
                           timerProvider.setNotificationsEnabled(value);
                         },
                       ),
                       Text(
                         'Suara Notifikasi',
-                        style: GoogleFonts.inter(color: Colors.grey[200]),
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
                       ),
                       DropdownButton<String>(
                         value: _notificationSound,
-                        dropdownColor: Colors.grey[800],
-                        style: GoogleFonts.inter(color: Colors.white),
+                        dropdownColor: Theme.of(context).colorScheme.surface,
+                        style: GoogleFonts.inter(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
                         items:
                             ['default', 'silent', 'custom_sound'].map((sound) {
                               return DropdownMenuItem(
                                 value: sound,
                                 child: Text(
                                   sound,
-                                  style: GoogleFonts.inter(color: Colors.white),
+                                  style: GoogleFonts.inter(
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge?.color,
+                                  ),
                                 ),
                               );
                             }).toList(),
@@ -332,16 +390,19 @@ class SettingsScreenState extends State<SettingsScreen> {
                         _notificationSound = 'default';
                         _isDarkTheme = true;
                         _selectedLanguage = 'en';
+                        _saveTheme(true);
+                        _saveLanguage('en');
                         if (widget.onThemeChanged != null) {
                           widget.onThemeChanged!(ThemeMode.dark);
                         }
-                        _saveLanguage('en');
                       });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       side: BorderSide(
-                        color: Color.fromRGBO(255, 255, 255, 0.7),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.7 * 255),
                       ),
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
@@ -351,7 +412,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     child: Text(
                       'Reset ke Default',
                       style: GoogleFonts.inter(
-                        color: Colors.white,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

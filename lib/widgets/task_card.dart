@@ -22,13 +22,16 @@ class TaskCard extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               'Pomodoro selesai: ${task.completedPomodoros}',
-              style: GoogleFonts.inter(fontSize: 16, color: Colors.grey[200]),
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
+              ),
             ),
           ],
         ),
