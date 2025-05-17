@@ -107,6 +107,12 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = _tasks.map((task) => task.toJson()).toList();
+    await prefs.setString('tasks', json.encode(tasksJson));
+  }
+
   Future<void> resetSettings() async {
     final prefs = await SharedPreferences.getInstance();
     _workDuration = 25 * 60;
@@ -200,12 +206,6 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void _saveTasks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final tasksJson = _tasks.map((task) => task.toJson()).toList();
-    await prefs.setString('tasks', json.encode(tasksJson));
-  }
-
   void _loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final tasksJson = prefs.getString('tasks');
@@ -214,5 +214,11 @@ class TimerProvider with ChangeNotifier {
       _tasks = tasksList.map((json) => Task.fromJson(json)).toList();
       notifyListeners();
     }
+  }
+
+  void removeTask(int index) async {
+    _tasks.removeAt(index);
+    await _saveTasks();
+    notifyListeners();
   }
 }

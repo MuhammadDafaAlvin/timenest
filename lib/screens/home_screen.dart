@@ -218,7 +218,17 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
-                        child: TaskCard(task: timerProvider.tasks[index]),
+                        child: GestureDetector(
+                          onLongPress: () {
+                            timerProvider.removeTask(index);
+                          },
+                          child: TaskCard(
+                            task: timerProvider.tasks[index],
+                            onDelete: () {
+                              timerProvider.removeTask(index);
+                            },
+                          ),
+                        ),
                       );
                     },
                   ),
