@@ -40,6 +40,11 @@ class TimerProvider with ChangeNotifier {
     _shortBreakDuration = prefs.getInt('shortBreakDuration') ?? 5 * 60;
     _longBreakDuration = prefs.getInt('longBreakDuration') ?? 15 * 60;
     _sessionsBeforeLongBreak = prefs.getInt('sessionsBeforeLongBreak') ?? 4;
+    // Pastikan nilai sessionsBeforeLongBreak minimal 1
+    if (_sessionsBeforeLongBreak < 1) {
+      _sessionsBeforeLongBreak = 1;
+      await prefs.setInt('sessionsBeforeLongBreak', _sessionsBeforeLongBreak);
+    }
     notifyListeners();
   }
 
@@ -79,12 +84,12 @@ class TimerProvider with ChangeNotifier {
 
   Future<void> setDurations(int work, int shortBreak, int longBreak) async {
     final prefs = await SharedPreferences.getInstance();
-    _workDuration = work;
-    _shortBreakDuration = shortBreak;
-    _longBreakDuration = longBreak;
-    await prefs.setInt('workDuration', work);
-    await prefs.setInt('shortBreakDuration', shortBreak);
-    await prefs.setInt('longBreakDuration', longBreak);
+    _workDuration = work < 60 ? 60 : work;
+    _shortBreakDuration = shortBreak < 60 ? 60 : shortBreak;
+    _longBreakDuration = longBreak < 60 ? 60 : longBreak;
+    await prefs.setInt('workDuration', _workDuration);
+    await prefs.setInt('shortBreakDuration', _shortBreakDuration);
+    await prefs.setInt('longBreakDuration', _longBreakDuration);
     final maxDuration =
         _currentMode == 'Work'
             ? _workDuration
@@ -101,16 +106,18 @@ class TimerProvider with ChangeNotifier {
 
   Future<void> setSessionsBeforeLongBreak(int sessions) async {
     final prefs = await SharedPreferences.getInstance();
-    _sessionsBeforeLongBreak = sessions;
-    await prefs.setInt('sessionsBeforeLongBreak', sessions);
+    _sessionsBeforeLongBreak = sessions < 1 ? 1 : sessions; // Minimal 1 sesi
+    await prefs.setInt('sessionsBeforeLongBreak', _sessionsBeforeLongBreak);
     _saveTimerState();
     notifyListeners();
   }
 
-  Future<void> _saveTasks() async {
+  Future<void> resetStatistics() async {
     final prefs = await SharedPreferences.getInstance();
-    final tasksJson = _tasks.map((task) => task.toJson()).toList();
-    await prefs.setString('tasks', json.encode(tasksJson));
+    _completedPomodorosToday = 0;
+    await prefs.setInt('completedPomodorosToday', _completedPomodorosToday);
+    _saveTimerState();
+    notifyListeners();
   }
 
   Future<void> resetSettings() async {
@@ -206,7 +213,13 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void _loadTasks() async {
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final tasksJson = _tasks.map((task) => task.toJson()).toList();
+    await prefs.setString('tasks', json.encode(tasksJson));
+  }
+
+  Future<void> _loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final tasksJson = prefs.getString('tasks');
     if (tasksJson != null) {

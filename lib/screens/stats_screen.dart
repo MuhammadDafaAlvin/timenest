@@ -17,7 +17,7 @@ class StatsScreen extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'Pomodoro Selesai Hari Ini: ${timerProvider.completedPomodorosToday}',
+              'Aktifitas Selesai Hari Ini: ${timerProvider.completedPomodorosToday}',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -52,6 +52,24 @@ class StatsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                timerProvider.resetStatistics();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Reset Statistik',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ],

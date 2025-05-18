@@ -32,7 +32,6 @@ class SettingsScreenState extends State<SettingsScreen> {
         _sessionsBeforeLongBreak = timerProvider.sessionsBeforeLongBreak;
       });
     });
-    // Load preferensi tema
     _loadPreferences();
   }
 
@@ -67,7 +66,6 @@ class SettingsScreenState extends State<SettingsScreen> {
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              // Durasi Timer
               GlassContainer(
                 opacity:
                     Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
@@ -94,15 +92,14 @@ class SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Slider(
                         value: _workDuration,
-                        min: 10,
+                        min: 1,
                         max: 60,
-                        divisions: 50,
+                        divisions: 59,
                         label: _workDuration.round().toString(),
                         activeColor: Theme.of(context).colorScheme.primary,
                         inactiveColor: Theme.of(
                           context,
                         ).colorScheme.onSurface.withAlpha((255 * 0.3).round()),
-
                         onChanged:
                             (value) => setState(() => _workDuration = value),
                         onChangeEnd: (value) {
@@ -121,9 +118,9 @@ class SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Slider(
                         value: _shortBreakDuration,
-                        min: 3,
+                        min: 1,
                         max: 15,
-                        divisions: 12,
+                        divisions: 14,
                         label: _shortBreakDuration.round().toString(),
                         activeColor: Theme.of(context).colorScheme.primary,
                         inactiveColor: Theme.of(
@@ -148,9 +145,9 @@ class SettingsScreenState extends State<SettingsScreen> {
                       ),
                       Slider(
                         value: _longBreakDuration,
-                        min: 10,
+                        min: 1,
                         max: 30,
-                        divisions: 20,
+                        divisions: 29,
                         label: _longBreakDuration.round().toString(),
                         activeColor: Theme.of(context).colorScheme.primary,
                         inactiveColor: Theme.of(
@@ -181,7 +178,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         items:
-                            [2, 3, 4, 5].map((sessions) {
+                            [1, 2, 3, 4, 5].map((sessions) {
                               return DropdownMenuItem(
                                 value: sessions,
                                 child: Text(
@@ -205,7 +202,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Tampilan
               GlassContainer(
                 opacity:
                     Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
@@ -249,7 +245,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Reset Pengaturan
               GlassContainer(
                 opacity:
                     Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1,
